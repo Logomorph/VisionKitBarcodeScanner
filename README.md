@@ -1,4 +1,4 @@
-# VisionKitBarcodeScanner
+# VisionKit Barcode Scanner
 VisionKit based barcode scanner with support for inverted barcodes
 
 Supports all the barcode types supported by VisionKit (list available here: https://developer.apple.com/documentation/vision/vnbarcodesymbology). Please note, availability depends on device, although almost all supported devices can handle all of them.
