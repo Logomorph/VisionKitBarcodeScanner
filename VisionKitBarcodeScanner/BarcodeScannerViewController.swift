@@ -53,6 +53,9 @@ class BarcodeScannerViewController: UIViewController {
         if let session = self.videoSession, !session.isRunning {
             session.startRunning()
         }
+        if let layer = self.videoLayer {
+            layer.frame = self.view.layer.bounds
+        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
