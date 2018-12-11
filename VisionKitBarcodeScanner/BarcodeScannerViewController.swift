@@ -210,11 +210,9 @@ extension BarcodeScannerViewController:AVCaptureVideoDataOutputSampleBufferDeleg
         for result in results {
             if let barcode = result as? VNBarcodeObservation {
                 DispatchQueue.main.async {
-                    self.videoSession?.stopRunning()
                     if let code = barcode.payloadStringValue {
+                        self.videoSession?.stopRunning()
                         self.delegate?.barcodeScanner(self, read: code)
-                    } else {
-                        self.delegate?.barcodeScannerFailed(self)
                     }
                 }
             }
