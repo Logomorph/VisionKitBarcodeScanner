@@ -17,13 +17,17 @@ protocol BarcodeScannerDelegate : class {
 }
 
 class BarcodeScannerViewController: UIViewController {
-    var videoSession: AVCaptureSession?
-    var videoLayer: AVCaptureVideoPreviewLayer?
-    weak var delegate: BarcodeScannerDelegate?
+    public weak var delegate: BarcodeScannerDelegate?
+    /// Inverts the image in order to improve scanning of inverted barcodes. Default false
+    public var shouldInvert = false
+    /// Keeps the scanning session active to enable continous scanning. Results may have to be filtered, as the same code could be scanned twice. Needs to be set when creating the controller. Default false
+    public var shouldKeepScanSessionActive = false
     
-    var currentTime:Double = 0
-    var lastTime:Double = 0
-    var shouldInvert = false
+    private var videoSession: AVCaptureSession?
+    private var videoLayer: AVCaptureVideoPreviewLayer?
+    
+    private var currentTime:Double = 0
+    private var lastTime:Double = 0
     
     init(delegate:BarcodeScannerDelegate?) {
         self.delegate = delegate
@@ -123,7 +127,7 @@ class BarcodeScannerViewController: UIViewController {
 }
 
 extension BarcodeScannerViewController:AVCaptureVideoDataOutputSampleBufferDelegate {
-    func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
+    fileprivate func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
         let threshold:Double = 1.0 / 3
         let timeStamp = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
         currentTime = Double(timeStamp.value) / Double(timeStamp.timescale)
@@ -211,7 +215,9 @@ extension BarcodeScannerViewController:AVCaptureVideoDataOutputSampleBufferDeleg
             if let barcode = result as? VNBarcodeObservation {
                 if let code = barcode.payloadStringValue {
                     DispatchQueue.main.async {
-                        self.videoSession?.stopRunning()
+                        if !self.shouldKeepScanSessionActive {
+                            self.videoSession?.stopRunning()
+                        }
                         self.delegate?.barcodeScanner(self, read: code)
                     }
                 }

@@ -22,7 +22,8 @@ class ViewController: UIViewController, BarcodeScannerDelegate {
     }
 
     @IBAction func scanPressed(_ sender: Any) {
-        let navController = UINavigationController(rootViewController: BarcodeScannerViewController(delegate: self))
+        let scannerController = BarcodeScannerViewController(delegate: self)
+        let navController = UINavigationController(rootViewController: scannerController)
         self.present(navController, animated: true, completion: nil)
     }
     
